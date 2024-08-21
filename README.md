@@ -1,6 +1,6 @@
 # In Vivo Electrophysiology Data Analysis
 
-This repository contains Python code and Jupyter notebooks for processing and analyzing in vivo electrophysiology datasets. It showcases a robust, automated pipeline for data preprocessing, feature extraction, and statistical analysis tailored to the study of neural activity.
+This repository contains Python code and Jupyter notebooks for processing and analysing in vivo electrophysiology datasets. It showcases a robust, automated pipeline for data preprocessing, feature extraction, and statistical analysis tailored to the study of neural activity.
 
 ## Project Overview
 
@@ -8,19 +8,19 @@ In vivo electrophysiology enables the investigation of electrical properties in 
 
 - **Data Preprocessing:** Includes noise reduction (bandpass filtering, notch filtering), artifact removal (e.g., movement artifacts), and signal alignment.
 - **Feature Extraction:** Automated extraction of relevant metrics like spike rates, inter-spike intervals (ISIs), local field potentials (LFPs), and power spectral densities (PSDs).
-- **Data Analysis:** In-depth statistical analysis (e.g., t-tests, ANOVAs, correlation analysis) integrated with visualization techniques such as raster plots, PSTHs, and time-frequency analyses.
-- **Automated Reporting:** Generates customizable summary reports in LaTeX/Markdown format with key figures and metrics.
+- **Data Analysis:** In-depth statistical analysis (e.g., t-tests, ANOVAs, correlation analysis) integrated with visualisation techniques such as raster plots, PSTHs, and time-frequency analyses.
+- **Automated Reporting:** Generates customisable summary reports in LaTeX/Markdown format with key figures and metrics.
 
 ## Repository Structure
 
-The repository is organized for easy navigation and scalability:
+The repository is organised for easy navigation and scalability:
 
 - `data/`: Contains raw and preprocessed datasets. An example dataset is included for demonstration.
 - `notebooks/`: Jupyter notebooks providing step-by-step interactive analysis. These include exploratory data analysis (EDA), signal processing, and statistical testing workflows.
 - `src/`: Modular Python scripts for pipeline automation:
     - `preprocessing.py`: Handles data cleaning, filtering, and alignment.
     - `feature_extraction.py`: Extracts spikes, LFPs, and other relevant features.
-    - `analysis.py`: Performs statistical analysis and generates visualizations.
+    - `analysis.py`: Performs statistical analysis and generates visualisations.
     - `reporting.py`: Compiles analysis results into summary reports.
 - `tests/`: Unit tests to validate the functionality of key modules, ensuring code reliability.
 - `.github/`: GitHub Actions for continuous integration (CI), ensuring code quality and functionality.
@@ -86,7 +86,7 @@ This project supports flexible environment setup using either Conda or `pyenv` +
 
 ## Running the Analysis
 
-1. Begin with exploratory data analysis using the Jupyter notebooks in `notebooks/`. This is useful for understanding the dataset, visualizing key features, and identifying artifacts.
+1. Begin with exploratory data analysis using the Jupyter notebooks in `notebooks/`. This is useful for understanding the dataset, visualising key features, and identifying artifacts.
 2. Execute the preprocessing pipeline:
     ```bash
     python src/preprocessing.py --input data/example_data.csv
