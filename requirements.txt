@@ -1,0 +1,12 @@
+numpy
+scipy
+matplotlib
+pandas
+seaborn
+scikit-learn
+mne
+neo
+h5py
+jupyter
+ipython
+notebook

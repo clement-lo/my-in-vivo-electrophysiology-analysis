@@ -36,7 +36,7 @@ This project supports flexible environment setup using either Conda or `pyenv` +
 
 1. Clone the repository:
     ```bash
-    git clone https://github.com/yourusername/my-electrophysiology-analysis.git
+    git clone https://github.com/clement-lo/my-electrophysiology-analysis.git
     cd my-electrophysiology-analysis
     ```
 
@@ -56,7 +56,7 @@ This project supports flexible environment setup using either Conda or `pyenv` +
 
 1. Clone the repository:
     ```bash
-    git clone https://github.com/yourusername/my-electrophysiology-analysis.git
+    git clone https://github.com/clement-lo/my-electrophysiology-analysis.git
     cd my-electrophysiology-analysis
     ```
 
