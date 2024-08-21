@@ -1,29 +1,36 @@
 # In Vivo Electrophysiology Data Analysis
 
-This repository contains Python code and Jupyter notebooks for processing and analyzing in vivo electrophysiology datasets. The project demonstrates automated pipelines for data preprocessing, feature extraction, and statistical analysis.
+This repository contains Python code and Jupyter notebooks for processing and analyzing in vivo electrophysiology datasets. It showcases a robust, automated pipeline for data preprocessing, feature extraction, and statistical analysis tailored to the study of neural activity.
 
 ## Project Overview
 
-In vivo electrophysiology is used to study the electrical properties of living neurons. This repository provides an end-to-end analysis workflow, including:
+In vivo electrophysiology enables the investigation of electrical properties in living neuronal circuits. This project provides a comprehensive analysis workflow with a focus on reproducibility, modularity, and clarity, covering the following key steps:
 
-- **Data Preprocessing:** Noise reduction, filtering, and artifact removal.
-- **Feature Extraction:** Calculating spike rates, local field potentials (LFPs), and other key metrics.
-- **Data Analysis:** Statistical testing, visualization, and automated reporting.
+- **Data Preprocessing:** Includes noise reduction (bandpass filtering, notch filtering), artifact removal (e.g., movement artifacts), and signal alignment.
+- **Feature Extraction:** Automated extraction of relevant metrics like spike rates, inter-spike intervals (ISIs), local field potentials (LFPs), and power spectral densities (PSDs).
+- **Data Analysis:** In-depth statistical analysis (e.g., t-tests, ANOVAs, correlation analysis) integrated with visualization techniques such as raster plots, PSTHs, and time-frequency analyses.
+- **Automated Reporting:** Generates customizable summary reports in LaTeX/Markdown format with key figures and metrics.
 
 ## Repository Structure
 
-- `data/`: Example datasets and raw data files.
-- `notebooks/`: Jupyter notebooks for interactive data exploration.
-- `src/`: Python scripts for data processing, feature extraction, and analysis.
-- `tests/`: Unit tests to validate the code.
-- `.github/`: GitHub Actions configuration for CI.
-- `environment.yml`: Conda environment with all dependencies.
+The repository is organized for easy navigation and scalability:
+
+- `data/`: Contains raw and preprocessed datasets. An example dataset is included for demonstration.
+- `notebooks/`: Jupyter notebooks providing step-by-step interactive analysis. These include exploratory data analysis (EDA), signal processing, and statistical testing workflows.
+- `src/`: Modular Python scripts for pipeline automation:
+    - `preprocessing.py`: Handles data cleaning, filtering, and alignment.
+    - `feature_extraction.py`: Extracts spikes, LFPs, and other relevant features.
+    - `analysis.py`: Performs statistical analysis and generates visualizations.
+    - `reporting.py`: Compiles analysis results into summary reports.
+- `tests/`: Unit tests to validate the functionality of key modules, ensuring code reliability.
+- `.github/`: GitHub Actions for continuous integration (CI), ensuring code quality and functionality.
+- `environment.yml`: Conda environment file listing all dependencies for consistent setup.
 - `requirements.txt`: Dependencies list for pip users.
-- `.python-version`: Python version file for `pyenv` users.
-  
+- `.python-version`: Specifies the Python version for users leveraging `pyenv`.
+
 ## Getting Started
 
-You have two options for setting up the Python environment: using Conda or `pyenv` with `venv`. Choose the method that works best for you.
+This project supports flexible environment setup using either Conda or `pyenv` + `venv`. Follow the steps below based on your preferred method.
 
 ### Option 1: Installation Using Conda
 
@@ -39,9 +46,10 @@ You have two options for setting up the Python environment: using Conda or `pyen
     conda activate electrophysiology
     ```
 
-3. Run the analysis:
+3. Run the preprocessing and analysis pipeline:
     ```bash
-    python src/analysis.py --input data/example_data.csv
+    python src/preprocessing.py --input data/example_data.csv
+    python src/analysis.py --input data/preprocessed_data.csv
     ```
 
 ### Option 2: Installation Using `pyenv` and `venv`
@@ -70,15 +78,28 @@ You have two options for setting up the Python environment: using Conda or `pyen
     pip install -r requirements.txt
     ```
 
-5. Run the analysis:
+5. Run the preprocessing and analysis pipeline:
     ```bash
-    python src/analysis.py --input data/example_data.csv
+    python src/preprocessing.py --input data/example_data.csv
+    python src/analysis.py --input data/preprocessed_data.csv
     ```
 
 ## Running the Analysis
 
-1. Start with exploratory data analysis using the Jupyter notebook in `notebooks/`.
-2. Execute the processing pipeline:
+1. Begin with exploratory data analysis using the Jupyter notebooks in `notebooks/`. This is useful for understanding the dataset, visualizing key features, and identifying artifacts.
+2. Execute the preprocessing pipeline:
     ```bash
-    python src/analysis.py --input data/example_data.csv
+    python src/preprocessing.py --input data/example_data.csv
     ```
+3. Run the analysis script:
+    ```bash
+    python src/analysis.py --input data/preprocessed_data.csv
+    ```
+4. Optionally, generate a summary report:
+    ```bash
+    python src/reporting.py --input results/ --output report.md
+    ```
+
+## Continuous Integration and Testing
+
+The repository uses GitHub Actions for CI, ensuring that every push and pull request runs unit tests and code linting (via `pylint`/`flake8`). This ensures high code quality and reliability.
