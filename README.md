@@ -1,21 +1,19 @@
-# my-in-vivo-electrophysiology-analysis
+my-electrophysiology-analysis/
 │
-│
-├── data/
+├── data/                     # Folder for raw data and example datasets
 │   └── example_data.csv
-├── notebooks/
+├── notebooks/                # Jupyter notebooks for data exploration and analysis
 │   └── exploratory_analysis.ipynb
-├── src/
-│   ├── preprocessing.py
-│   ├── feature_extraction.py
-│   └── analysis.py
-├── tests/
+├── src/                      # Core Python scripts for data processing, analysis, and visualization
+│   ├── preprocessing.py      # Data cleaning and preprocessing
+│   ├── feature_extraction.py # Script for extracting features like spike rates, LFPs, etc.
+│   └── analysis.py           # Main analysis pipeline
+├── tests/                    # Unit tests for validating the code
 │   └── test_analysis.py
-├── .github/
+├── .github/                  # GitHub Actions workflows and configurations
 │   └── workflows/
-│       └── ci.yml
-├── environment.yml
-├── requirements.txt
-├── .python-version
-├── LICENSE
-├── README.md
+│       └── ci.yml            # Continuous Integration (CI) configuration
+├── environment.yml           # Conda environment file with dependencies
+├── requirements.txt          # Alternative Python package dependencies file (for pip users)
+├── LICENSE                   # License file (MIT, GPL, etc.)
+├── README.md                 # Detailed description of the project
