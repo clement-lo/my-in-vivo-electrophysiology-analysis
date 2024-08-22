@@ -2,7 +2,7 @@
 
 This repository contains Python code and Jupyter notebooks for processing and analysing in vivo electrophysiology datasets. It showcases a robust, automated pipeline for data preprocessing, feature extraction, and statistical analysis tailored to the study of neural activity.
 
-## Project Overview
+## Process Overview
 
 In vivo electrophysiology enables the investigation of electrical properties in living neuronal circuits. This project provides a comprehensive analysis workflow with a focus on reproducibility, modularity, and clarity, covering the following key steps:
 
