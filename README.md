@@ -1,6 +1,6 @@
 # In Vivo Electrophysiology Data Analysis
 
-This repository contains Python code and Jupyter notebooks for processing and analysing in vivo electrophysiology datasets. It showcases a robust, automated pipeline for data preprocessing, feature extraction, and statistical analysis tailored to the study of neural activity.
+This repository contains Python code and Jupyter notebooks for processing and analyzing in vivo electrophysiology datasets. It showcases a robust, automated pipeline for data preprocessing, feature extraction, and statistical analysis tailored to the study of neural activity.
 
 ## Process Overview
 
@@ -8,20 +8,19 @@ In vivo electrophysiology enables the investigation of electrical properties in 
 
 - **Data Preprocessing:** Includes noise reduction (bandpass filtering, notch filtering), artifact removal (e.g., movement artifacts), and signal alignment.
 - **Feature Extraction:** Automated extraction of relevant metrics like spike rates, inter-spike intervals (ISIs), local field potentials (LFPs), and power spectral densities (PSDs).
-- **Data Analysis:** In-depth statistical analysis (e.g., t-tests, ANOVAs, correlation analysis) integrated with visualisation techniques such as raster plots, PSTHs, and time-frequency analyses.
-- **Automated Reporting:** Generates customisable summary reports in LaTeX/Markdown format with key figures and metrics.
+- **Data Analysis:** Statistical analysis (e.g., t-tests, ANOVAs, correlation analysis) integrated with visualization techniques such as raster plots, PSTHs, and time-frequency analyses.
+- **Automated Reporting:** Generates customizable summary reports in LaTeX/Markdown format with key figures and metrics.
 
 ## Repository Structure
 
-The repository is organised in:
+The repository is organized as follows:
 
 - `data/`: Contains raw and preprocessed datasets. An example dataset is included for demonstration.
 - `notebooks/`: Jupyter notebooks providing step-by-step interactive analysis. These include exploratory data analysis (EDA), signal processing, and statistical testing workflows.
 - `src/`: Modular Python scripts for pipeline automation:
-    - `preprocessing.py`: Handles data cleaning, filtering, and alignment.
-    - `feature_extraction.py`: Extracts spikes, LFPs, and other relevant features.
-    - `analysis.py`: Performs statistical analysis and generates visualisations.
-    - `reporting.py`: Compiles analysis results into summary reports.
+    - `preprocess.py`: Handles data cleaning, filtering, and alignment.
+    - `analysis.py`: Performs statistical analysis and generates visualizations.
+    - `visualise.py`: Creates detailed visual reports from processed data.
 - `tests/`: Unit tests to validate the functionality of key modules, ensuring code reliability.
 - `.github/`: GitHub Actions for continuous integration (CI), ensuring code quality and functionality.
 - `environment.yml`: Conda environment file listing all dependencies for consistent setup.
@@ -48,7 +47,7 @@ This project supports Conda or `pyenv` + `venv`. Follow the steps below based on
 
 3. Run the preprocessing and analysis pipeline:
     ```bash
-    python src/preprocessing.py --input data/example_data.csv
+    python src/preprocess.py --input data/example_data.csv
     python src/analysis.py --input data/preprocessed_data.csv
     ```
 
@@ -80,24 +79,41 @@ This project supports Conda or `pyenv` + `venv`. Follow the steps below based on
 
 5. Run the preprocessing and analysis pipeline:
     ```bash
-    python src/preprocessing.py --input data/example_data.csv
+    python src/preprocess.py --input data/example_data.csv
     python src/analysis.py --input data/preprocessed_data.csv
     ```
 
 ## Running the Analysis
 
-1. Begin with exploratory data analysis using the Jupyter notebooks in `notebooks/`. This is useful for understanding the dataset, visualising key features, and identifying artifacts
+### Option 1: Using Jupyter Notebooks
 
-   
-2. Execute the preprocessing pipeline:
+1. **Exploratory Data Analysis**: Begin by opening and running the Jupyter notebooks located in the `notebooks/` directory. These notebooks provide an interactive environment to explore the dataset, visualize key features, and identify artifacts.
+
+   - To start, navigate to the repository directory and launch Jupyter:
+     ```bash
+     jupyter notebook
+     ```
+   - Open and run `01_Preprocessing.ipynb`, `02_signal_analysis.ipynb`, and `03_visualisation.ipynb` sequentially.
+
+2. **Data Visualization**: Use the notebooks to generate visualizations like raster plots and time-frequency analyses, which help in understanding the processed data.
+
+### Option 2: Using Python Scripts
+
+For a non-interactive, script-based approach:
+
+1. **Data Preprocessing**:
     ```bash
-    python src/preprocessing.py --input data/example_data.csv
+    python src/preprocess.py --input data/example_data.csv
     ```
-4. Run the analysis script:
+
+2. **Data Analysis**:
     ```bash
     python src/analysis.py --input data/preprocessed_data.csv
     ```
-5. Visualise data and generate summary:
+
+3. **Data Visualization and Reporting**:
     ```bash
     python src/visualise.py --input results/ --output report.md
     ```
+
+This approach is ideal for batch processing and integrating into automated pipelines.
