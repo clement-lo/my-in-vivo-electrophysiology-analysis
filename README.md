@@ -1,6 +1,6 @@
 # In Vivo Electrophysiology Data Analysis
 
-This repository contains Python code and Jupyter notebooks for processing and analyzing in vivo electrophysiology datasets. It showcases a robust, automated pipeline for data preprocessing, feature extraction, and statistical analysis tailored to the study of neural activity.
+This repository contains Python code and Jupyter notebooks for processing and analysing in vivo electrophysiology datasets. It showcases a robust, automated pipeline for data preprocessing, feature extraction, and statistical analysis tailored to the study of neural activity.
 
 ## Process Overview
 
@@ -8,18 +8,18 @@ In vivo electrophysiology enables the investigation of electrical properties in 
 
 - **Data Preprocessing:** Includes noise reduction (bandpass filtering, notch filtering), artifact removal (e.g., movement artifacts), and signal alignment.
 - **Feature Extraction:** Automated extraction of relevant metrics like spike rates, inter-spike intervals (ISIs), local field potentials (LFPs), and power spectral densities (PSDs).
-- **Data Analysis:** Statistical analysis (e.g., t-tests, ANOVAs, correlation analysis) integrated with visualization techniques such as raster plots, PSTHs, and time-frequency analyses.
-- **Automated Reporting:** Generates customizable summary reports in LaTeX/Markdown format with key figures and metrics.
+- **Data Analysis:** Statistical analysis (e.g., t-tests, ANOVAs, correlation analysis) integrated with visualisation techniques such as raster plots, PSTHs, and time-frequency analyses.
+- **Automated Reporting:** Generates customisable summary reports in LaTeX/Markdown format with key figures and metrics.
 
 ## Repository Structure
 
-The repository is organized as follows:
+The repository is organised as follows:
 
 - `data/`: Contains raw and preprocessed datasets. An example dataset is included for demonstration.
 - `notebooks/`: Jupyter notebooks providing step-by-step interactive analysis. These include exploratory data analysis (EDA), signal processing, and statistical testing workflows.
 - `src/`: Modular Python scripts for pipeline automation:
     - `preprocess.py`: Handles data cleaning, filtering, and alignment.
-    - `analysis.py`: Performs statistical analysis and generates visualizations.
+    - `analysis.py`: Performs statistical analysis and generates visualisations.
     - `visualise.py`: Creates detailed visual reports from processed data.
 - `tests/`: Unit tests to validate the functionality of key modules, ensuring code reliability.
 - `.github/`: GitHub Actions for continuous integration (CI), ensuring code quality and functionality.
@@ -87,7 +87,7 @@ This project supports Conda or `pyenv` + `venv`. Follow the steps below based on
 
 ### Option 1: Using Jupyter Notebooks
 
-1. **Exploratory Data Analysis**: Begin by opening and running the Jupyter notebooks located in the `notebooks/` directory. These notebooks provide an interactive environment to explore the dataset, visualize key features, and identify artifacts.
+1. **Exploratory Data Analysis**: Begin by opening and running the Jupyter notebooks located in the `notebooks/` directory. These notebooks provide an interactive environment to explore the dataset, visualise key features, and identify artifacts.
 
    - To start, navigate to the repository directory and launch Jupyter:
      ```bash
@@ -95,7 +95,7 @@ This project supports Conda or `pyenv` + `venv`. Follow the steps below based on
      ```
    - Open and run `01_Preprocessing.ipynb`, `02_signal_analysis.ipynb`, and `03_visualisation.ipynb` sequentially.
 
-2. **Data Visualization**: Use the notebooks to generate visualizations like raster plots and time-frequency analyses, which help in understanding the processed data.
+2. **Data Visualisation**: Use the notebooks to generate visualisations like raster plots and time-frequency analyses, which help in understanding the processed data.
 
 ### Option 2: Using Python Scripts
 
@@ -111,7 +111,7 @@ For a non-interactive, script-based approach:
     python src/analysis.py --input data/preprocessed_data.csv
     ```
 
-3. **Data Visualization and Reporting**:
+3. **Data Visualisation and Reporting**:
     ```bash
     python src/visualise.py --input results/ --output report.md
     ```
