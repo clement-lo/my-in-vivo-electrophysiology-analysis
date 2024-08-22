@@ -13,7 +13,7 @@ In vivo electrophysiology enables the investigation of electrical properties in 
 
 ## Repository Structure
 
-The repository is organised for easy navigation and scalability:
+The repository is organised in:
 
 - `data/`: Contains raw and preprocessed datasets. An example dataset is included for demonstration.
 - `notebooks/`: Jupyter notebooks providing step-by-step interactive analysis. These include exploratory data analysis (EDA), signal processing, and statistical testing workflows.
@@ -30,7 +30,7 @@ The repository is organised for easy navigation and scalability:
 
 ## Getting Started
 
-This project supports flexible environment setup using either Conda or `pyenv` + `venv`. Follow the steps below based on your preferred method.
+This project supports Conda or `pyenv` + `venv`. Follow the steps below based on your preferred method.
 
 ### Option 1: Installation Using Conda
 
@@ -86,20 +86,18 @@ This project supports flexible environment setup using either Conda or `pyenv` +
 
 ## Running the Analysis
 
-1. Begin with exploratory data analysis using the Jupyter notebooks in `notebooks/`. This is useful for understanding the dataset, visualising key features, and identifying artifacts.
+1. Begin with exploratory data analysis using the Jupyter notebooks in `notebooks/`. This is useful for understanding the dataset, visualising key features, and identifying artifacts
+
+   
 2. Execute the preprocessing pipeline:
     ```bash
     python src/preprocessing.py --input data/example_data.csv
     ```
-3. Run the analysis script:
+4. Run the analysis script:
     ```bash
     python src/analysis.py --input data/preprocessed_data.csv
     ```
-4. Optionally, generate a summary report:
+5. Visualise data and generate summary:
     ```bash
-    python src/reporting.py --input results/ --output report.md
+    python src/visualise.py --input results/ --output report.md
     ```
-
-## Continuous Integration and Testing
-
-The repository uses GitHub Actions for CI, ensuring that every push and pull request runs unit tests and code linting (via `pylint`/`flake8`). This ensures high code quality and reliability.
