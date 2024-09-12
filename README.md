@@ -4,39 +4,88 @@
 
 This repository provides a comprehensive toolkit for analyzing **in vivo electrophysiology** data, focusing on both **classic electrophysiology setups** (e.g., single-channel recordings) and **multi-electrode array (MEA) setups**. The repository integrates well-established libraries like **Neo**, **Elephant**, **SpikeInterface**, and **NeuroChaT**, offering robust support for a wide range of data formats and advanced analytical methods. It is designed to support researchers and analysts in neuroscience with modular, flexible, and extensible tools for data analysis, visualization, and interpretation.
 
-## Repository Structure
+## Table of Contents
+[Repository Structure](#repository-structure)
+[Prerequisites](#prerequisites)
+[Installation](#installation)
+[Data Formats and Handling](#data-formats-and-handling)
+[Analysis Types](#analysis-types)
+[Classic Electrophysiology Setups](#classic-electrophysiology-setups)
+[Spike Sorting and Firing Rate Analysis](#spike-sorting-and-firing-rate-analysis)
+[Local Field Potential (LFP) Analysis](#local-field-potential-lfp-analysis)
+[Single-Unit and Multi-Unit Activity Analysis](#single-unit-and-multi-unit-activity-analysis)
+[Multi-Electrode Array (MEA) Setups](#multi-electrode-array-mea-setups)
+[Advanced Spike Sorting and Clustering](#advanced-spike-sorting-and-clustering)
+[Functional Connectivity Analysis](#functional-connectivity-analysis)
+[Effective Connectivity and Causal Inference](#effective-connectivity-and-causal-inference)
+[Phase-Amplitude Coupling (PAC) and Cross-Frequency Coupling (CFC)](#phase-amplitude-coupling-pac-and-cross-frequency-coupling-cfc)
+[Network Graph Analysis and Community Detection](#network-graph-analysis-and-community-detection)
+[Burst Detection and Oscillatory Analysis](#burst-detection-and-oscillatory-analysis)
+[Modularity and Extensibility](#modularity-and-extensibility)
+[Integration with Established Libraries](#integration-with-established-libraries)
+[Advanced Visualization and Interactive Notebooks](#advanced-visualization-and-interactive-notebooks)
+[Unit Testing and Continuous Integration (CI)](#unit-testing-and-continuous-integration-ci)
+[Example Datasets and Detailed Workflows](#example-datasets-and-detailed-workflows)
+[License and Citation](#license-and-citation)
+[References](#references)
 
+## Repository Structure
 ```plaintext
-├── README.md                   # Main documentation file
-├── requirements.txt            # Python dependencies for the project
-├── data/                       # Directory for storing raw and preprocessed data
-├── results/                    # Output directory for results from analyses
-├── scripts/                    # Directory containing all the analysis scripts
-│   ├── python/                 # Python scripts for in vivo electrophysiology analysis
-│   │   ├── spike_sorting.py
-│   │   ├── lfp_analysis.py
-│   │   ├── connectivity_analysis.py
-│   │   └── multi_electrode_analysis.py
-│   ├── matlab/                 # MATLAB scripts for in vivo electrophysiology analysis
-│   │   ├── spike_sorting.m
-│   │   ├── lfp_analysis.m
-│   │   ├── connectivity_analysis.m
-│   │   └── multi_electrode_analysis.m
-├── notebooks/                  # Jupyter Notebooks for interactive analyses
-│   ├── 01_Spike_Sorting.ipynb
-│   ├── 02_LFP_Analysis.ipynb
-│   ├── 03_Connectivity_Analysis.ipynb
-│   └── 04_Multi_Electrode_Analysis.ipynb
-├── tests/                      # Unit tests for the analysis scripts
-│   ├── test_spike_sorting.py
+├── README.md                                     # Main documentation file
+├── requirements.txt                              # Python dependencies for the project
+├── data/                                         # Directory for storing raw and preprocessed data
+├── results/                                      # Output directory for results from analyses
+├── scripts/                                      # Main directory containing all the analysis scripts
+│   ├── single_limited_channel/                   # Directory for single-channel or limited-channel analyses
+│   │   ├── python/                               # Python scripts for single/limited channel analyses
+│   │   │   ├── spike_sorting_firing_rate_analysis.py
+│   │   │   ├── lfp_analysis.py
+│   │   │   ├── single_multi_unit_activity_analysis.py
+│   │   ├── matlab/                               # MATLAB scripts for single/limited channel analyses
+│   │   │   ├── spike_sorting_firing_rate_analysis.m
+│   │   │   ├── lfp_analysis.m
+│   │   │   ├── single_multi_unit_activity_analysis.m
+│   │   ├── notebooks/                            # Jupyter Notebooks for single/limited channel analyses
+│   │   │   ├── 01_Spike_Sorting_Firing_Rate_Analysis.ipynb
+│   │   │   ├── 02_LFP_Analysis.ipynb
+│   │   │   ├── 03_Single_Multi_Unit_Activity_Analysis.ipynb
+│   ├── multi_electrode_array/                    # Directory for multi-electrode array analyses
+│   │   ├── python/                               # Python scripts for MEA analyses
+│   │   │   ├── advanced_spike_sorting_clustering.py
+│   │   │   ├── functional_connectivity_analysis.py
+│   │   │   ├── effective_connectivity_causal_inference.py
+│   │   │   ├── pac_cfc_analysis.py
+│   │   │   ├── network_graph_analysis.py
+│   │   │   ├── burst_detection_oscillatory_analysis.py
+│   │   ├── matlab/                               # MATLAB scripts for MEA analyses
+│   │   │   ├── advanced_spike_sorting_clustering.m
+│   │   │   ├── functional_connectivity_analysis.m
+│   │   │   ├── effective_connectivity_causal_inference.m
+│   │   │   ├── pac_cfc_analysis.m
+│   │   │   ├── network_graph_analysis.m
+│   │   │   ├── burst_detection_oscillatory_analysis.m
+│   │   ├── notebooks/                            # Jupyter Notebooks for MEA analyses
+│   │   │   ├── 01_Advanced_Spike_Sorting_Clustering.ipynb
+│   │   │   ├── 02_Functional_Connectivity_Analysis.ipynb
+│   │   │   ├── 03_Effective_Connectivity_Causal_Inference.ipynb
+│   │   │   ├── 04_PAC_CFC_Analysis.ipynb
+│   │   │   ├── 05_Network_Graph_Analysis.ipynb
+│   │   │   ├── 06_Burst_Detection_Oscillatory_Analysis.ipynb
+├── tests/                                        # Unit tests for the analysis scripts
+│   ├── test_spike_sorting_firing_rate_analysis.py
 │   ├── test_lfp_analysis.py
-│   ├── test_connectivity_analysis.py
-│   └── test_multi_electrode_analysis.py
-├── examples/                   # Example datasets and workflows
+│   ├── test_single_multi_unit_activity_analysis.py
+│   ├── test_advanced_spike_sorting_clustering.py
+│   ├── test_functional_connectivity_analysis.py
+│   ├── test_effective_connectivity_causal_inference.py
+│   ├── test_pac_cfc_analysis.py
+│   ├── test_network_graph_analysis.py
+│   ├── test_burst_detection_oscillatory_analysis.py
+├── examples/                                     # Example datasets and workflows
 │   ├── example_data.csv
 │   └── example_workflow.ipynb
-├── CONTRIBUTING.md             # Guidelines for contributing to the repository
-└── LICENSE.md                  # Licensing information
+├── CONTRIBUTING.md                               # Guidelines for contributing to the repository
+└── LICENSE.md                                    # Licensing information
 ```
 ## Prerequisites
 Ensure you have the following installed on your system:
