@@ -1,119 +1,193 @@
-# In Vivo Electrophysiology Data Analysis
+# My In Vivo Electrophysiology Analysis Repository
 
-This repository contains Python code and Jupyter notebooks for processing and analysing in vivo electrophysiology datasets. It showcases a robust, automated pipeline for data preprocessing, feature extraction, and statistical analysis tailored to the study of neural activity.
+## Overview
 
-## Process Overview
-
-In vivo electrophysiology enables the investigation of electrical properties in living neuronal circuits. This project provides a comprehensive analysis workflow with a focus on reproducibility, modularity, and clarity, covering the following key steps:
-
-- **Data Preprocessing:** Includes noise reduction (bandpass filtering, notch filtering), artifact removal (e.g., movement artifacts), and signal alignment.
-- **Feature Extraction:** Automated extraction of relevant metrics like spike rates, inter-spike intervals (ISIs), local field potentials (LFPs), and power spectral densities (PSDs).
-- **Data Analysis:** Statistical analysis (e.g., t-tests, ANOVAs, correlation analysis) integrated with visualisation techniques such as raster plots, PSTHs, and time-frequency analyses.
-- **Automated Reporting:** Generates customisable summary reports in LaTeX/Markdown format with key figures and metrics.
+This repository provides a comprehensive toolkit for analyzing **in vivo electrophysiology** data, focusing on both **classic electrophysiology setups** (e.g., single-channel recordings) and **multi-electrode array (MEA) setups**. The repository integrates well-established libraries like **Neo**, **Elephant**, **SpikeInterface**, and **NeuroChaT**, offering robust support for a wide range of data formats and advanced analytical methods. It is designed to support researchers and analysts in neuroscience with modular, flexible, and extensible tools for data analysis, visualization, and interpretation.
 
 ## Repository Structure
 
-The repository is organised as follows:
+```plaintext
+├── README.md                   # Main documentation file
+├── requirements.txt            # Python dependencies for the project
+├── data/                       # Directory for storing raw and preprocessed data
+├── results/                    # Output directory for results from analyses
+├── scripts/                    # Directory containing all the analysis scripts
+│   ├── python/                 # Python scripts for in vivo electrophysiology analysis
+│   │   ├── spike_sorting.py
+│   │   ├── lfp_analysis.py
+│   │   ├── connectivity_analysis.py
+│   │   └── multi_electrode_analysis.py
+│   ├── matlab/                 # MATLAB scripts for in vivo electrophysiology analysis
+│   │   ├── spike_sorting.m
+│   │   ├── lfp_analysis.m
+│   │   ├── connectivity_analysis.m
+│   │   └── multi_electrode_analysis.m
+├── notebooks/                  # Jupyter Notebooks for interactive analyses
+│   ├── 01_Spike_Sorting.ipynb
+│   ├── 02_LFP_Analysis.ipynb
+│   ├── 03_Connectivity_Analysis.ipynb
+│   └── 04_Multi_Electrode_Analysis.ipynb
+├── tests/                      # Unit tests for the analysis scripts
+│   ├── test_spike_sorting.py
+│   ├── test_lfp_analysis.py
+│   ├── test_connectivity_analysis.py
+│   └── test_multi_electrode_analysis.py
+├── examples/                   # Example datasets and workflows
+│   ├── example_data.csv
+│   └── example_workflow.ipynb
+├── CONTRIBUTING.md             # Guidelines for contributing to the repository
+└── LICENSE.md                  # Licensing information
+```
+## Prerequisites
+Ensure you have the following installed on your system:
 
-- `data/`: Contains raw and preprocessed datasets. An example dataset is included for demonstration.
-- `notebooks/`: Jupyter notebooks providing step-by-step interactive analysis. These include exploratory data analysis (EDA), signal processing, and statistical testing workflows.
-- `src/`: Modular Python scripts for pipeline automation:
-    - `preprocess.py`: Handles data cleaning, filtering, and alignment.
-    - `analysis.py`: Performs statistical analysis and generates visualisations.
-    - `visualise.py`: Creates detailed visual reports from processed data.
-- `tests/`: Unit tests to validate the functionality of key modules, ensuring code reliability.
-- `.github/`: GitHub Actions for continuous integration (CI), ensuring code quality and functionality.
-- `environment.yml`: Conda environment file listing all dependencies for consistent setup.
-- `requirements.txt`: Dependencies list for pip users.
-- `.python-version`: Specifies the Python version for users leveraging `pyenv`.
+- Python 3.10.14 or higher
+- Jupyter Notebook
+- MATLAB (optional, for some analyses)
+- Git (for version control)
+- Libraries: Neo, Elephant, SpikeInterface, Matplotlib, NumPy, SciPy
 
-## Getting Started
+## Installation
+To get started with this repository, follow the steps below:
+Clone the Repository: Open Terminal (Mac) or Command Prompt (Windows), and run:
 
-This project supports Conda or `pyenv` + `venv`. Follow the steps below based on your preferred method.
+```bash
+git clone https://github.com/clement-lo/my-in-vivo-electrophysiology-analysis.git
+cd my-in-vivo-electrophysiology-analysis
+Create a Virtual Environment:
+```
+```bash
+python3 -m venv env
+source env/bin/activate  # For Mac/Linux
+.\env\Scripts\activate  # For Windows
+Install Required Python Libraries:
+```
+```bash
+pip install -r requirements.txt
+```
+Verify Installation: 
+``` bash
+Run python --version and pip list to confirm Python and required packages are installed correctly.
+```
 
-### Option 1: Installation Using Conda
+## Data Formats and Handling
+This repository supports various data formats commonly used in in vivo electrophysiology research, including:
+Neo Data Format: Supported by libraries like Neo and SpikeInterface for standardized data handling.
+CSV and MATLAB Files: For users with custom data formats, we provide functions to load and preprocess these data types.
+Ensure your data is properly formatted and organized in the data/ directory before running any analysis.
 
-1. Clone the repository:
-    ```bash
-    git clone https://github.com/clement-lo/my-electrophysiology-analysis.git
-    cd my-electrophysiology-analysis
-    ```
+## Analysis Types
+This repository is divided into **two** main types of analyses:
 
-2. Set up the Conda environment:
-    ```bash
-    conda env create -f environment.yml
-    conda activate electrophysiology
-    ```
+### 1. Classic Electrophysiology Setups
+Classic electrophysiology setups focus on single-channel or limited-channel recordings. These setups are common in traditional in vivo studies, where recordings are made using electrodes positioned in specific brain areas to capture neuronal activity.
 
-3. Run the preprocessing and analysis pipeline:
-    ```bash
-    python src/preprocess.py --input data/example_data.csv
-    python src/analysis.py --input data/preprocessed_data.csv
-    ```
+#### a. Spike Sorting and Firing Rate Analysis
+- Objective: Detect and sort spikes from raw electrophysiological data, compute firing rates, analyze spike train dynamics, and visualize spike trains.
+- Methods:
+- - Spike Detection: Threshold-based and template matching approaches to detect spikes in continuous signals.
+- - Feature Extraction: Extract key features like spike width, amplitude, and waveform shape for clustering.
+- - Clustering Algorithms: Methods like K-means, Gaussian Mixture Models (GMM), and Density-Based Spatial Clustering of Applications with Noise (DBSCAN) are used for sorting spikes into units.
+- - Spike Train Analysis: Compute interspike intervals (ISI), peri-stimulus time histograms (PSTH), and burst detection.
+- Tools: Python, MATLAB, SpikeInterface (SpikeInterface on GitHub), Neo (Neo on GitHub), Elephant (Elephant on GitHub).
+- Outcome: Sorted spikes, firing rate histograms, raster plots, and autocorrelograms.
+#### b. Local Field Potential (LFP) Analysis
+- Objective: Analyze local field potentials to understand neural oscillations, rhythms, and interactions between brain regions.
+- Methods:
+- - Time-Frequency Analysis: Short-Time Fourier Transform (STFT), Wavelet Transforms to study power across different frequency bands (delta, theta, alpha, beta, gamma).
+- - Coherence Analysis: Assess coherence between LFP signals recorded from different brain regions.
+- - Phase-Amplitude Coupling (PAC): Investigate the coupling between the phase of low-frequency oscillations and the amplitude of high-frequency oscillations.
+- - Cross-Frequency Coupling (CFC): Measure interactions between oscillatory activities at different frequencies.
+- Tools: Python, MATLAB, Elephant, MNE-Python (MNE-Python on GitHub), PyWavelets (PyWavelets on GitHub).
+- Outcome: Power spectral densities (PSD), spectrograms, coherence plots, phase-amplitude coupling indices.
+#### c. Single-Unit and Multi-Unit Activity Analysis
+- Objective: Analyze single-unit and multi-unit activity (SUA/MUA) to understand neuronal coding and information processing.
+- Methods:
+- - Single-Unit Isolation: Isolate and analyze activity from single neurons.
+- - Multi-Unit Activity Analysis: Aggregate spikes from all recorded neurons to analyze general network activity.
+- - Spike-Triggered Averaging: Align spikes to external stimuli to analyze sensory processing or motor control.
+- Tools: Python, MATLAB, SpikeInterface, Neo.
+- Outcome: Tuning curves, receptive fields, neuronal response profiles.
 
-### Option 2: Installation Using `pyenv` and `venv`
+### 2. Multi-Electrode Array (MEA) Setups
+Multi-electrode array (MEA) setups are designed for high-density recordings, allowing for more comprehensive analysis of network-level dynamics. This section provides a more advanced analysis to capture complex brain activity patterns.
 
-1. Clone the repository:
-    ```bash
-    git clone https://github.com/clement-lo/my-electrophysiology-analysis.git
-    cd my-electrophysiology-analysis
-    ```
+#### a. Advanced Spike Sorting and Clustering
+- Objective: Perform advanced spike sorting and clustering for MEA recordings to analyze network activity.
+- Methods:
+- - Template Matching and Subspace Projections: Use template matching and subspace projections to classify spikes from densely packed electrodes.
+- - Dimensionality Reduction Techniques: PCA, t-SNE, and UMAP for visualizing high-dimensional spike features.
+- - Spike Clustering Algorithms: HDBSCAN, Kilosort (Kilosort on GitHub), IronClust (IronClust on GitHub), and MountainSort (MountainSort on GitHub) for clustering spikes across electrodes.
+- Tools: Python, MATLAB, SpikeInterface, Kilosort, MountainSort, IronClust.
+- Outcome: Clustered spikes, spike train cross-correlograms, and sorted spike trains.
+#### b. Functional Connectivity Analysis
+- Objective: Analyze functional connectivity between neurons recorded from MEA setups to understand network communication and dynamics.
+- Methods:
+- - Cross-Correlation and Joint Peri-Stimulus Time Histogram (JPSTH): Measure correlation between spike trains to infer connectivity.
+- - Granger Causality and Directed Transfer Function (DTF): Identify directional interactions between neurons.
+- - Partial Directed Coherence (PDC) and Coherence Analysis: Study synchronization and communication between neural populations.
+- Tools: Python, MATLAB, Elephant, MNE-Python.
+- Outcome: Functional connectivity matrices, Granger causality graphs, and cross-correlograms.
+#### c. Effective Connectivity and Causal Inference
+- Objective: Investigate causal relationships and effective connectivity using directed graph models.
+- Methods:
+- - Dynamic Causal Modeling (DCM) and Transfer Entropy (TE): Infer the direction and strength of influence between neurons.
+- - Generalized Linear Models (GLM) and Bayesian Networks: Statistical models for neural connectivity analysis.
+- Tools: Python, MATLAB, Elephant, PyMC3 (PyMC3 on GitHub), statsmodels.
+- Outcome: Directed connectivity graphs, transfer entropy values, causal interaction plots.
+#### d. Phase-Amplitude Coupling (PAC) and Cross-Frequency Coupling (CFC)
+- Objective: Measure phase-amplitude coupling (PAC) and cross-frequency coupling (CFC) to understand neural synchronization and communication.
+- Methods:
+- - Hilbert Transform: Extract phase and amplitude information for coupling analysis.
+- - Modulation Index (MI) and Phase Locking Value (PLV): Quantify the strength of coupling.
+- - Wavelet Coherence: Analyze coherence between signals across frequency bands.
+- Tools: Python, MATLAB, NeuroChaT (NeuroChaT on GitHub), Elephant.
+- Outcome: PAC plots, cross-frequency coupling matrices, coherence spectra.
+#### e. Network Graph Analysis and Community Detection
+- Objective: Model the brain as a network and analyze its structure, dynamics, and modular organization.
+- Methods:
+- - Graph Theory Metrics: Degree, betweenness, closeness centrality, clustering coefficient.
+- - Community Detection Algorithms: Louvain, Leiden, and Infomap algorithms for detecting clusters or communities in brain networks.
+- - Network Dynamics Analysis: Measure network robustness, small-world properties, and motif analysis.
+- Tools: Python, NetworkX (NetworkX on GitHub), Neo, Brain Connectivity Toolbox (BCT).
+- Outcome: Network graphs, community structures, connectivity heatmaps, centrality plots.
+#### f. Burst Detection and Oscillatory Analysis
+- Objective: Detect bursts of activity and analyze oscillatory phenomena in multi-electrode array recordings.
+- Methods:
+- - Burst Detection Algorithms: Poisson surprise, log-surprise, interval method.
+- - Oscillatory Dynamics: Analyze oscillatory patterns using wavelet transforms, band-pass filtering, and Hilbert transform.
+- Tools: Python, MATLAB, NeuroChaT, Elephant.
+- Outcome: Burst raster plots, oscillatory power spectra, burst duration histograms.
+## Modularity and Extensibility
+The repository is designed to be modular, allowing for easy extension by adding new modules for specific analyses. Each type of analysis is encapsulated in its own script or function to enable reuse and extension. Contributing new analysis modules or extending existing ones can be done by following the structure and guidelines provided.
 
-2. Install the required Python version using `pyenv`:
-    ```bash
-    pyenv install 3.8.12
-    pyenv local 3.8.12
-    ```
+## Integration with Established Libraries
+The repository integrates popular libraries such as:
+- Neo: For standardized data handling and storage.
+- Elephant: For advanced time-frequency analysis and spike train analysis.
+- SpikeInterface: For efficient spike sorting and integration with multiple spike sorting algorithms.
+- NeuroChaT: For in vivo spike train analysis and phase-locking analysis.
+- Advanced Visualization and Interactive Notebooks
+This repository provide Jupyter Notebooks for each analysis type, offering step-by-step guidance and interactive visualizations. Notebooks allow users to explore data interactively, modify parameters, and visualize results dynamically.
 
-3. Create and activate a virtual environment:
-    ```bash
-    python -m venv .venv
-    source .venv/bin/activate  # On Linux/Mac
-    .venv\Scripts\activate     # On Windows
-    ```
+## Unit Testing and Continuous Integration (CI)
+Unit tests are provided for each analysis script to ensure robustness and reliability. We recommend using GitHub Actions for Continuous Integration (CI) to run these tests automatically upon code updates.
 
-4. Install dependencies:
-    ```bash
-    pip install -r requirements.txt
-    ```
+## Example Datasets and Detailed Workflows
+Example datasets and workflows are included to guide users through data preprocessing, analysis, and interpretation. These examples are located in the examples/ directory and provide end-to-end tutorials for various analyses.
 
-5. Run the preprocessing and analysis pipeline:
-    ```bash
-    python src/preprocess.py --input data/example_data.csv
-    python src/analysis.py --input data/preprocessed_data.csv
-    ```
+## License and Citation
+This repository is available under the GNU General Public License v3.0 (GPL-3.0) for academic use. For commercial use, please contact me for licensing information.
 
-## Running the Analysis
-
-### Option 1: Using Jupyter Notebooks
-
-1. **Exploratory Data Analysis**: Begin by opening and running the Jupyter notebooks located in the `notebooks/` directory. These notebooks provide an interactive environment to explore the dataset, visualise key features, and identify artifacts.
-
-   - To start, navigate to the repository directory and launch Jupyter:
-     ```bash
-     jupyter notebook
-     ```
-   - Open and run `01_Preprocessing.ipynb`, `02_signal_analysis.ipynb`, and `03_visualisation.ipynb` sequentially.
-
-2. **Data Visualisation**: Use the notebooks to generate visualisations like raster plots and time-frequency analyses, which help in understanding the processed data.
-
-### Option 2: Using Python Scripts
-
-For a non-interactive, script-based approach:
-
-1. **Data Preprocessing**:
-    ```bash
-    python src/preprocess.py --input data/example_data.csv
-    ```
-
-2. **Data Analysis**:
-    ```bash
-    python src/analysis.py --input data/preprocessed_data.csv
-    ```
-
-3. **Data Visualisation and Reporting**:
-    ```bash
-    python src/visualise.py --input results/ --output report.md
-    ```
-
-This approach is ideal for batch processing and integrating into automated pipelines.
+## References
+- [Neo](https://github.com/NeuralEnsemble/python-neo) 
+- [Elephant](https://github.com/NeuralEnsemble/elephant)
+- [SpikeInterface](https://github.com/SpikeInterface/spikeinterface)
+- [NeuroChaT](https://github.com/shanemomara/NeuroChaT)
+- [Kilosort](https://github.com/MouseLand/Kilosort)
+- [IronClust](https://github.com/flatironinstitute/ironclust)
+- [MountainSort](https://github.com/flatironinstitute/mountainsort)
+- [MNE-Python](https://github.com/mne-tools/mne-python)
+- [PyWavelets](https://github.com/PyWavelets/pywt)
+- [PyMC3](https://github.com/pymc-devs/pymc3)
+- [NetworkX](https://github.com/networkx/networkx)
