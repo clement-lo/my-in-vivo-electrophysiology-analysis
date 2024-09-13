@@ -1,160 +1,124 @@
-% LFP Analysis - MATLAB equivalent of lfp_analysis.py
+% lfp_analysis.m
 
-% 1. Data Handling Module
-function recording = load_data(file_path)
-    % Load electrophysiological data using Neo equivalent in MATLAB.
-    % Args:
-    % - file_path (str): Path to the file containing raw data.
-    % Returns:
-    % - recording: Loaded data in MATLAB format.
-    
-    % Example: Using FieldTrip or similar toolbox to load Neuralynx data
-    cfg = [];
-    cfg.dataset = file_path;
-    data = ft_preprocessing(cfg);
-    recording = data;
+%% Local Field Potential (LFP) Analysis
+% This script performs LFP analysis using MATLAB, including:
+% - Time-Frequency Analysis: STFT, Wavelet Transform
+% - Coherence Analysis
+% - Phase-Amplitude Coupling (PAC)
+% - Cross-Frequency Coupling (CFC)
+% - Visualizations for each analysis
+
+%% 1. Load Data
+function [data, fs] = load_data(file_path)
+    % Load electrophysiological data using MATLAB's built-in functions
+    loaded_data = load(file_path);
+    % Ensure the actual variable names match your data structure
+    data = loaded_data.lfp_data;  % Replace with your data variable name
+    fs = loaded_data.fs;  % Replace with your sampling frequency variable name
 end
 
-% 2. Preprocessing Module
-function recording_preprocessed = preprocess_data(recording, freq_min, freq_max, notch_freq)
-    % Preprocess the loaded data by applying bandpass filtering and optional notch filtering.
-    % Args:
-    % - recording: Loaded data.
-    % - freq_min (float): Minimum frequency for bandpass filter.
-    % - freq_max (float): Maximum frequency for bandpass filter.
-    % - notch_freq (float): Frequency for notch filter to remove powerline noise. If empty, skip.
-    % Returns:
-    % - recording_preprocessed: Preprocessed LFP data.
-    
-    % Bandpass filter for LFP
-    cfg = [];
-    cfg.bpfilter = 'yes';
-    cfg.bpfreq = [freq_min freq_max];
-    recording_bp = ft_preprocessing(cfg, recording);
-    
+%% 2. Preprocess Data
+function data_filtered = preprocess_data(data, fs, freq_min, freq_max, notch_freq)
+    % Preprocess the loaded data by applying bandpass and notch filters.
+    [b, a] = butter(2, [freq_min, freq_max] / (fs / 2), 'bandpass');
+    data_filtered = filtfilt(b, a, data);
+
     % Optional notch filter
     if ~isempty(notch_freq)
-        cfg = [];
-        cfg.bsfilter = 'yes';
-        cfg.bsfreq = [notch_freq - 1, notch_freq + 1];  % 2 Hz bandwidth for notch
-        recording_preprocessed = ft_preprocessing(cfg, recording_bp);
-    else
-        recording_preprocessed = recording_bp;
+        [b_notch, a_notch] = iirnotch(notch_freq / (fs / 2), notch_freq / (fs * 35));
+        data_filtered = filtfilt(b_notch, a_notch, data_filtered);
     end
 end
 
-% 3. Time-Frequency Analysis Module
-function [freqs, psd] = time_frequency_analysis(analog_signal, fs)
-    % Perform time-frequency analysis using spectral methods.
-    % Args:
-    % - analog_signal: LFP data in MATLAB format.
-    % - fs (int): Sampling frequency.
-    % Returns:
-    % - freqs: Frequency bins.
-    % - psd: Power spectral density.
-    
-    % Example using pwelch for power spectral density
-    [psd, freqs] = pwelch(analog_signal, [], [], [], fs);
+%% 3. Time-Frequency Analysis (STFT)
+function [S, F, T] = time_frequency_analysis_stft(data, fs, nperseg)
+    % Perform time-frequency analysis using Short-Time Fourier Transform (STFT).
+    window = hann(nperseg);
+    overlap = round(nperseg * 0.5);
+    [S, F, T] = stft(data, fs, 'Window', window, 'OverlapLength', overlap, 'FFTLength', nperseg);
+    S = abs(S);
 end
 
-% 4. Coherence Analysis Module
-function [coherency, freqs] = coherence_analysis(analog_signal1, analog_signal2, fs)
-    % Assess coherence between two LFP signals.
-    % Args:
-    % - analog_signal1: First LFP signal.
-    % - analog_signal2: Second LFP signal.
-    % - fs (int): Sampling frequency.
-    % Returns:
-    % - coherency: Coherence values.
-    % - freqs: Frequency bins.
-    
-    % Example using mscohere for coherence analysis
-    [coherency, freqs] = mscohere(analog_signal1, analog_signal2, [], [], [], fs);
+%% 4. Time-Frequency Analysis (Wavelet Transform)
+function [cfs, freqs, T] = time_frequency_analysis_wavelet(data, fs)
+    % Perform time-frequency analysis using Wavelet Transform.
+    scales = 1:1:128;  % Example scales
+    [cfs, freqs] = cwt(data, 'amor', fs, 'VoicesPerOctave', 12);
+    T = (0:length(data)-1) / fs;  % Time vector corresponding to the data length
 end
 
-% 5. Phase-Amplitude Coupling (PAC) Analysis Module
-function pac = pac_analysis(analog_signal, low_freq, high_freq)
+%% 5. Coherence Analysis
+function [coherency, freqs] = coherence_analysis(data1, data2, fs)
+    [coherency, freqs] = mscohere(data1, data2, [], [], [], fs);
+end
+
+%% 6. Phase-Amplitude Coupling (PAC) Analysis
+function mi = pac_analysis(data, fs, low_freq, high_freq)
     % Investigate Phase-Amplitude Coupling (PAC) in LFP signals.
-    % Args:
-    % - analog_signal: LFP data in MATLAB format.
-    % - low_freq: Low-frequency range for phase extraction.
-    % - high_freq: High-frequency range for amplitude extraction.
-    % Returns:
-    % - pac: Modulation index (MI) for PAC.
-    
-    % Example PAC analysis using modulation index calculation
-    pac = modindex(analog_signal, low_freq, high_freq);  % modindex is a custom or toolbox function
+    low_freq_band = bandpass(data, low_freq, fs);
+    phase_data = angle(hilbert(low_freq_band));
+    high_freq_band = bandpass(data, high_freq, fs);
+    amplitude_data = abs(hilbert(high_freq_band));
+    % Use standard PAC analysis method, such as Modulation Index by Tort et al.
+    % (Example simplified calculation here)
+    mi = mean(amplitude_data .* exp(1j * phase_data));
 end
 
-% 6. Visualization Module
-function plot_power_spectral_density(freqs, psd)
-    % Plot power spectral density using MATLAB.
-    % Args:
-    % - freqs: Frequency bins.
-    % - psd: Power spectral density.
-    
+%% 7. Cross-Frequency Coupling (CFC) Analysis
+function cfc_matrix = cfc_analysis(data, fs, phase_freqs, amplitude_freqs)
+    num_phase_freqs = length(phase_freqs);
+    num_amplitude_freqs = length(amplitude_freqs);
+    cfc_matrix = zeros(num_phase_freqs, num_amplitude_freqs);
+    for i = 1:num_phase_freqs
+        for j = 1:num_amplitude_freqs
+            cfc_matrix(i, j) = pac_analysis(data, fs, phase_freqs(i,:), amplitude_freqs(j,:));
+        end
+    end
+end
+
+%% 8. Visualization Functions
+function plot_psd(freqs, psd)
     figure;
     semilogy(freqs, psd);
     xlabel('Frequency (Hz)');
     ylabel('Power Spectral Density');
     title('Power Spectral Density of LFP');
-    grid on;
 end
 
 function plot_coherence(freqs, coherency)
-    % Plot coherence between two LFP signals.
-    % Args:
-    % - freqs: Frequency bins.
-    % - coherency: Coherence values.
-    
     figure;
     plot(freqs, coherency);
     xlabel('Frequency (Hz)');
     ylabel('Coherence');
     title('Coherence Analysis');
-    grid on;
 end
 
-function plot_pac(pac)
-    % Visualize Phase-Amplitude Coupling (PAC) using MATLAB.
-    % Args:
-    % - pac: Modulation index for PAC.
-    
+function plot_wavelet_transform(T, F, cfs)
     figure;
-    imagesc(pac);
+    imagesc(T, F, abs(cfs)); axis xy;
+    xlabel('Time (s)');
+    ylabel('Frequency (Hz)');
+    title('Wavelet Transform');
     colorbar;
-    xlabel('Phase Frequency (Hz)');
-    ylabel('Amplitude Frequency (Hz)');
-    title('Phase-Amplitude Coupling (PAC)');
 end
 
-% Main function
+%% Main Function
 function main(file_path)
-    % Main function to perform LFP analysis.
-    % Args:
-    % - file_path (str): Path to the data file.
-    
-    % Step 1: Load Data
-    recording = load_data(file_path);
-    
-    % Step 2: Preprocess Data
-    recording_preprocessed = preprocess_data(recording, 1, 100, 50);
-
-    % Step 3: Perform Time-Frequency Analysis
-    analog_signal = recording_preprocessed.trial{1};  % Assuming single trial data
-    fs = recording_preprocessed.fsample;  % Sampling frequency
-    [freqs, psd] = time_frequency_analysis(analog_signal, fs);
-    plot_power_spectral_density(freqs, psd);
-
-    % Step 4: Coherence Analysis
-    [coherency, freqs_coherence] = coherence_analysis(analog_signal, analog_signal, fs);  % Example with the same signal
+    [data, fs] = load_data(file_path);
+    data_filtered = preprocess_data(data, fs, 1, 100, 50);
+    [S, F, T] = time_frequency_analysis_stft(data_filtered, fs, 256);
+    figure; imagesc(T, F, abs(S)); axis xy; title('STFT Magnitude'); xlabel('Time (s)'); ylabel('Frequency (Hz)');
+    [cfs, freqs, T] = time_frequency_analysis_wavelet(data_filtered, fs);
+    plot_wavelet_transform(T, freqs, cfs);
+    [coherency, freqs_coherence] = coherence_analysis(data_filtered, data_filtered, fs);
     plot_coherence(freqs_coherence, coherency);
-
-    % Step 5: PAC Analysis
-    pac = pac_analysis(analog_signal, [4, 8], [30, 100]);  % Example frequencies for phase and amplitude
-    plot_pac(pac);
+    mi = pac_analysis(data_filtered, fs, [4 8], [30 100]);
+    disp(['PAC Modulation Index: ', num2str(mi)]);
+    phase_freqs = [4, 8; 8, 12];
+    amplitude_freqs = [30, 50; 50, 80];
+    cfc_matrix = cfc_analysis(data_filtered, fs, phase_freqs, amplitude_freqs);
+    disp('CFC Analysis Result:'); disp(cfc_matrix);
 end
 
-% Call main function
-file_path = 'data/sample_lfp_data';  % Example file path
-main(file_path);
+% Run the main function with an example file path
+main('data/sample_lfp_data.mat');  % Adjust the path to your dataset

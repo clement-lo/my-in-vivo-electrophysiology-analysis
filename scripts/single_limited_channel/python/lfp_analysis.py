@@ -14,6 +14,9 @@ import matplotlib.pyplot as plt  # For static visualization
 import plotly.graph_objects as go  # For interactive visualization with Plotly
 import numpy as np  # For numerical operations
 from neo.io import NeuralynxIO  # Example IO for Neo data loading
+from scipy.signal import stft, spectrogram  # For STFT and spectrogram analysis
+import pywt  # For wavelet transforms
+import elephant.signal_processing as esp  # For wavelet transform in Elephant
 
 # 1. Data Handling Module
 def load_data(file_path):
@@ -57,9 +60,42 @@ def preprocess_data(recording, freq_min=1, freq_max=100, notch_freq=None):
     return recording_bp
 
 # 3. Time-Frequency Analysis Module
-def time_frequency_analysis(analog_signal, fs=1000):
+def time_frequency_analysis_stft(analog_signal, fs=1000, nperseg=256):
     """
-    Perform time-frequency analysis using spectral methods.
+    Perform time-frequency analysis using Short-Time Fourier Transform (STFT).
+    
+    Args:
+    - analog_signal (neo.AnalogSignal): LFP data in Neo's AnalogSignal format.
+    - fs (int): Sampling frequency.
+    - nperseg (int): Length of each segment for STFT.
+    
+    Returns:
+    - f (np.ndarray): Frequency bins.
+    - t (np.ndarray): Time bins.
+    - Zxx (np.ndarray): STFT result.
+    """
+    f, t, Zxx = stft(analog_signal.flatten(), fs, nperseg=nperseg)
+    return f, t, Zxx
+
+def time_frequency_analysis_wavelet(analog_signal, scales, wavelet='cmor'):
+    """
+    Perform time-frequency analysis using Wavelet Transform.
+    
+    Args:
+    - analog_signal (neo.AnalogSignal): LFP data in Neo's AnalogSignal format.
+    - scales (array-like): Scales for the wavelet transform.
+    - wavelet (str): Wavelet type (default: 'cmor').
+    
+    Returns:
+    - coef (np.ndarray): Wavelet coefficients.
+    - freqs (np.ndarray): Corresponding frequencies for each scale.
+    """
+    coef, freqs = pywt.cwt(analog_signal.flatten(), scales, wavelet)
+    return coef, freqs
+
+def power_spectral_density(analog_signal, fs=1000):
+    """
+    Compute Power Spectral Density (PSD) using Welch's method.
     
     Args:
     - analog_signal (neo.AnalogSignal): LFP data in Neo's AnalogSignal format.
@@ -88,7 +124,7 @@ def coherence_analysis(analog_signal1, analog_signal2):
     coherency, freqs = ecoh.coherence(analog_signal1, analog_signal2)
     return coherency, freqs
 
-# 5. Phase-Amplitude Coupling (PAC) Analysis Module
+# 5. Phase-Amplitude Coupling (PAC) and Cross-Frequency Coupling (CFC) Analysis Module
 def pac_analysis(analog_signal, low_freq, high_freq):
     """
     Investigate Phase-Amplitude Coupling (PAC) in LFP signals.
@@ -103,6 +139,21 @@ def pac_analysis(analog_signal, low_freq, high_freq):
     """
     pac = ephase.phase_amplitude_coupling(analog_signal, low_freq, high_freq)
     return pac
+
+def cfc_analysis(analog_signal, phase_freqs, amplitude_freqs):
+    """
+    Measure Cross-Frequency Coupling (CFC) interactions between oscillatory activities at different frequencies.
+    
+    Args:
+    - analog_signal (neo.AnalogSignal): LFP data in Neo's AnalogSignal format.
+    - phase_freqs (tuple): Frequency range for phase extraction.
+    - amplitude_freqs (tuple): Frequency range for amplitude extraction.
+    
+    Returns:
+    - cfc (np.ndarray): CFC result matrix.
+    """
+    cfc = esp.wavelet_transform(analog_signal, phase_freqs, amplitude_freqs)
+    return cfc
 
 # 6. Visualization Module
 def plot_power_spectral_density(freqs, psd):
@@ -146,6 +197,23 @@ def plot_pac(pac):
     fig.update_layout(title="Phase-Amplitude Coupling (PAC)", xaxis_title="Phase Frequency (Hz)", yaxis_title="Amplitude Frequency (Hz)")
     fig.show()
 
+def plot_wavelet_transform(coef, freqs, time):
+    """
+    Plot wavelet transform coefficients using Matplotlib.
+    
+    Args:
+    - coef (np.ndarray): Wavelet coefficients.
+    - freqs (np.ndarray): Frequencies for each scale.
+    - time (np.ndarray): Time vector.
+    """
+    plt.figure()
+    plt.imshow(np.abs(coef), extent=[time.min(), time.max(), freqs.min(), freqs.max()], cmap='jet', aspect='auto', origin='lower')
+    plt.colorbar(label='Magnitude')
+    plt.xlabel('Time (s)')
+    plt.ylabel('Frequency (Hz)')
+    plt.title('Wavelet Transform')
+    plt.show()
+
 # Main function
 def main(file_path):
     """
@@ -160,10 +228,21 @@ def main(file_path):
     # Step 2: Preprocess Data
     recording_preprocessed = preprocess_data(recording, freq_min=1, freq_max=100, notch_freq=50)
 
-    # Step 3: Perform Time-Frequency Analysis
+    # Step 3: Perform Time-Frequency Analysis (STFT and Wavelet)
     analog_signal = recording_preprocessed.get_traces().T
-    freqs, psd = time_frequency_analysis(analog_signal)
+    freqs, psd = power_spectral_density(analog_signal)
     plot_power_spectral_density(freqs, psd)
+
+    f, t, Zxx = time_frequency_analysis_stft(analog_signal)
+    plt.pcolormesh(t, f, np.abs(Zxx), shading='gouraud')
+    plt.title('STFT Magnitude')
+    plt.ylabel('Frequency [Hz]')
+    plt.xlabel('Time [sec]')
+    plt.show()
+
+    scales = np.arange(1, 128)
+    coef, wavelet_freqs = time_frequency_analysis_wavelet(analog_signal, scales)
+    plot_wavelet_transform(coef, wavelet_freqs, t)
 
     # Step 4: Coherence Analysis
     coherency, freqs_coherence = coherence_analysis(analog_signal, analog_signal)  # Example with the same signal
@@ -172,6 +251,10 @@ def main(file_path):
     # Step 5: PAC Analysis
     pac = pac_analysis(analog_signal, (4, 8), (30, 100))  # Example frequencies for phase and amplitude
     plot_pac(pac)
+
+    # Step 6: CFC Analysis
+    cfc = cfc_analysis(analog_signal, (4, 8), (30, 100))
+    # Include visualization for CFC as needed
 
 if __name__ == "__main__":
     # Example file path for demonstration purposes
