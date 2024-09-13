@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt  # For static visualization
 import plotly.graph_objects as go  # For interactive visualization with Plotly
 import numpy as np  # For numerical operations
 from neo.io import NeuralynxIO  # Example IO for Neo data loading
-from scipy.signal import stft, spectrogram  # For STFT and spectrogram analysis
+from scipy.signal import stft, spectrogram, welch  # For STFT, spectrogram, and PSD analysis
 import pywt  # For wavelet transforms
 import elephant.signal_processing as esp  # For wavelet transform in Elephant
 
@@ -29,12 +29,15 @@ def load_data(file_path):
     Returns:
     - recording (si.BaseRecording): Loaded data in SpikeInterface's RecordingExtractor format.
     """
-    reader = NeuralynxIO(dirname=file_path)
-    block = reader.read_block()
-    segment = block.segments[0]
-    analog_signal = segment.analogsignals[0]
-    recording = se.NeoRecordingExtractor(analog_signal)
-    return recording
+    try:
+        reader = NeuralynxIO(dirname=file_path)
+        block = reader.read_block()
+        segment = block.segments[0]
+        analog_signal = segment.analogsignals[0]
+        recording = se.NeoRecordingExtractor(analog_signal)
+        return recording
+    except Exception as e:
+        raise IOError(f"Error loading data: {e}")
 
 # 2. Preprocessing Module
 def preprocess_data(recording, freq_min=1, freq_max=100, notch_freq=None):
@@ -50,14 +53,17 @@ def preprocess_data(recording, freq_min=1, freq_max=100, notch_freq=None):
     Returns:
     - recording_preprocessed (si.BaseRecording): Preprocessed LFP data.
     """
-    # Bandpass filter for LFP
-    recording_bp = sp.bandpass_filter(recording, freq_min=freq_min, freq_max=freq_max)
-    
-    # Optional notch filter
-    if notch_freq:
-        recording_notch = sp.notch_filter(recording_bp, freq=notch_freq)
-        return recording_notch
-    return recording_bp
+    try:
+        # Bandpass filter for LFP
+        recording_bp = sp.bandpass_filter(recording, freq_min=freq_min, freq_max=freq_max)
+        
+        # Optional notch filter
+        if notch_freq:
+            recording_notch = sp.notch_filter(recording_bp, freq=notch_freq)
+            return recording_notch
+        return recording_bp
+    except Exception as e:
+        raise ValueError(f"Error in preprocessing data: {e}")
 
 # 3. Time-Frequency Analysis Module
 def time_frequency_analysis_stft(analog_signal, fs=1000, nperseg=256):
@@ -105,7 +111,7 @@ def power_spectral_density(analog_signal, fs=1000):
     - freqs (np.ndarray): Frequency bins.
     - psd (np.ndarray): Power spectral density.
     """
-    psd, freqs = espt.welch_psd(analog_signal, fs=fs)
+    psd, freqs = welch(analog_signal.flatten(), fs)
     return freqs, psd
 
 # 4. Coherence Analysis Module
